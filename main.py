@@ -1,13 +1,17 @@
-from Gather_Data import GatherData
+import Gather_Data as gd
 from LSTM_Engine import LSTM_Engine
 
-stock = "WEB.AX"
+ticker = "BTC"
+start = "01-01-2022"
+end = "01-01-2023"
+
+
 period = "2y"
 interval = "1d"
 
-stock_data = GatherData(stock, period, interval)
+data = gd.GatherCryptoData(ticker, start, end)
 
-LSTM_Engine(stock_data=stock_data)
+LSTM_Engine(stock_data=data)
 
 
 

@@ -1,4 +1,5 @@
 import yfinance as yf
+from cryptocmd import CmcScraper
 
 ###
 #Function takes input:
@@ -15,6 +16,11 @@ import yfinance as yf
 def GatherData(Ticker, Period, Interval):
     historicalData = yf.Ticker(Ticker).history(period = Period, interval = Interval)
     return historicalData[["Close", "Dividends"]]
+
+def GatherCryptoData(Ticker, Start, End):
+    data = CmcScraper(Ticker, Start, End)
+    data = data.get_dataframe()
+    return data
 
 #Testing
 if __name__ == "__main__":

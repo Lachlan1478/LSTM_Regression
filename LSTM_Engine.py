@@ -33,7 +33,7 @@ def LSTM_Engine(stock_data):
         return np.array(X_train), np.array(y_train)
 
     # Set the number of time steps for the LSTM model
-    look_back = 1
+    look_back = 5
     X_train, y_train = create_training_data(train_data, look_back)
     X_train = np.reshape(X_train, (X_train.shape[0], 1, X_train.shape[1]))
 
@@ -82,4 +82,11 @@ def LSTM_Engine(stock_data):
 
     # Calculate the root mean squared error
     rmse = np.sqrt(np.mean(((predictions - y_test) ** 2)))
+
+    # totalpctdiff = 0
+    # for i in range(0, len(predictions) - 1):
+    #     pctdiff = (predictions[i+1] - y_test) / y_test
+    #     totalpctdiff = totalpctdiff + pctdiff
+
+
     print(rmse)
