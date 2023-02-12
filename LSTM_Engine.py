@@ -40,21 +40,24 @@ class lstm_model:
         self.X_test, self.y_test = create_training_data(test_data, look_back)
         self.X_test = np.reshape(self.X_test, (self.X_test.shape[0], 1, self.X_test.shape[1]))
 
+    def input_parameters(self, hidden_units, optimization):
+        self.hidden_units = hidden_units
+        self.optimization = optimization
+
+    # Create a function to build the LSTM model
+    def build_model(self, hidden_units, optimization):
+        model = Sequential()
+        model.add(
+            LSTM(units=hidden_units, return_sequences=True, input_shape=(self.X_train.shape[1], self.X_train.shape[2])))
+        model.add(LSTM(units=hidden_units, return_sequences=False))
+        model.add(Dense(units=25))
+        model.add(Dense(units=1))
+        model.compile(loss='mean_squared_error', optimizer=optimization, metrics=['accuracy'])
+        return model
 
     def find_parameters(self):
-
-        # Create a function to build the LSTM model
-        def build_model(hidden_units, optimization):
-            model = Sequential()
-            model.add(LSTM(units=hidden_units, return_sequences=True, input_shape=(self.X_train.shape[1], self.X_train.shape[2])))
-            model.add(LSTM(units=hidden_units, return_sequences=False))
-            model.add(Dense(units=25))
-            model.add(Dense(units=1))
-            model.compile(loss='mean_squared_error', optimizer=optimization, metrics=['accuracy'])
-            return model
-
         # Create the model wrapper
-        model = KerasClassifier(build_fn=build_model, verbose=0)
+        model = KerasClassifier(build_fn=self.build_model, verbose=0)
 
         print("Model build successfully!")
 
@@ -79,17 +82,15 @@ class lstm_model:
         self.hidden_units = grid_search_result.best_params_["hidden_units"]
         self.optimization = grid_search_result.best_params_["optimization"]
 
+
+    def model_to_use(self):
+        lstm_model = self.build_model(self.hidden_units, self.optimization)
+
         # Get the model's predicted prices
-        predictions = grid_search.predict(self.X_test)
+        predictions = lstm_model.predict(self.X_test)
         predictions = self.scaler.inverse_transform(predictions)
 
         # Calculate the root mean squared error
         rmse = np.sqrt(np.mean(((predictions - self.y_test) ** 2)))
-
-        # totalpctdiff = 0
-        # for i in range(0, len(predictions) - 1):
-        #     pctdiff = (predictions[i+1] - y_test) / y_test
-        #     totalpctdiff = totalpctdiff + pctdiff
-
 
         print(rmse)

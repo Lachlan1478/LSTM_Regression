@@ -12,7 +12,9 @@ interval = "1d"
 data = gd.GatherCryptoData(ticker, start, end)
 
 model = lstm.lstm_model(stock_data=data)
-model.find_parameters()
+#model.find_parameters()
+model.input_parameters(hidden_units=10, optimization='ADAM')
+model.model_to_use()
 
 
 
