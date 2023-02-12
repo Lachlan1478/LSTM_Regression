@@ -1,5 +1,5 @@
 import Gather_Data as gd
-from LSTM_Engine import LSTM_Engine
+import LSTM_Engine as lstm
 
 ticker = "BTC"
 start = "01-01-2022"
@@ -11,8 +11,8 @@ interval = "1d"
 
 data = gd.GatherCryptoData(ticker, start, end)
 
-LSTM_Engine(stock_data=data)
-
+model = lstm.lstm_model(stock_data=data)
+model.find_parameters()
 
 
 
