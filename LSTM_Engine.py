@@ -10,6 +10,7 @@ class lstm_model:
     def __init__(self, stock_data):
         df = stock_data
         series = df['Close']
+        dates = df['Date'].values
 
         # Drop any rows with missing data
         series = series.dropna()
@@ -22,6 +23,12 @@ class lstm_model:
         training_data_len = int(len(scaled_data) * 0.8)
         train_data = scaled_data[0:training_data_len, :]
         test_data = scaled_data[training_data_len:, :]
+
+        self.train_dates = dates[0:training_data_len]
+        self.test_dates = dates[training_data_len:]
+
+        print(self.test_dates)
+
 
         # Create a function to create the training data for the LSTM model
         def create_training_data(data, look_back=1):
@@ -110,5 +117,6 @@ class lstm_model:
         # Plot the predictions against the actual values
         plt.plot(y_test_inverted, label='Actual')
         plt.plot(y_pred_inverted, label='Predicted')
+        plt.xticks(range(len(self.test_dates)), self.test_dates, rotation='vertical')
         plt.legend()
         plt.show()
