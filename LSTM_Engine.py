@@ -4,6 +4,7 @@ from keras.models import Sequential
 from keras.layers import LSTM, Dense, Dropout
 from keras.wrappers.scikit_learn import KerasClassifier
 from sklearn.model_selection import GridSearchCV
+import matplotlib.pyplot as plt
 
 class lstm_model:
     def __init__(self, stock_data):
@@ -40,21 +41,24 @@ class lstm_model:
         self.X_test, self.y_test = create_training_data(test_data, look_back)
         self.X_test = np.reshape(self.X_test, (self.X_test.shape[0], 1, self.X_test.shape[1]))
 
+    def input_parameters(self, hidden_units, optimization):
+        self.hidden_units = hidden_units
+        self.optimization = optimization
+
+    # Create a function to build the LSTM model
+    def build_model(self, hidden_units, optimization):
+        model = Sequential()
+        model.add(
+            LSTM(units=hidden_units, return_sequences=True, input_shape=(self.X_train.shape[1], self.X_train.shape[2])))
+        model.add(LSTM(units=hidden_units, return_sequences=False))
+        model.add(Dense(units=25))
+        model.add(Dense(units=1))
+        model.compile(loss='mean_squared_error', optimizer=optimization, metrics=['accuracy'])
+        return model
 
     def find_parameters(self):
-
-        # Create a function to build the LSTM model
-        def build_model(hidden_units, optimization):
-            model = Sequential()
-            model.add(LSTM(units=hidden_units, return_sequences=True, input_shape=(self.X_train.shape[1], self.X_train.shape[2])))
-            model.add(LSTM(units=hidden_units, return_sequences=False))
-            model.add(Dense(units=25))
-            model.add(Dense(units=1))
-            model.compile(loss='mean_squared_error', optimizer=optimization, metrics=['accuracy'])
-            return model
-
         # Create the model wrapper
-        model = KerasClassifier(build_fn=build_model, verbose=0)
+        model = KerasClassifier(build_fn=self.build_model, verbose=0)
 
         print("Model build successfully!")
 
@@ -79,17 +83,32 @@ class lstm_model:
         self.hidden_units = grid_search_result.best_params_["hidden_units"]
         self.optimization = grid_search_result.best_params_["optimization"]
 
+
+    def model_to_use(self):
+        self.lstm_model = self.build_model(self.hidden_units, self.optimization)
+        self.lstm_model.fit(self.X_train, self.y_train, epochs = 100,batch_size=10, verbose=0)
+
         # Get the model's predicted prices
-        predictions = grid_search.predict(self.X_test)
+        predictions = self.lstm_model.predict(self.X_test)
         predictions = self.scaler.inverse_transform(predictions)
 
         # Calculate the root mean squared error
         rmse = np.sqrt(np.mean(((predictions - self.y_test) ** 2)))
 
-        # totalpctdiff = 0
-        # for i in range(0, len(predictions) - 1):
-        #     pctdiff = (predictions[i+1] - y_test) / y_test
-        #     totalpctdiff = totalpctdiff + pctdiff
-
-
         print(rmse)
+
+    def plot_predictions(self):
+        # Make predictions on the test data
+        y_pred = self.lstm_model.predict(self.X_test)
+
+        # Invert the scaling to get the predictions back in the original scale
+        y_pred_inverted = self.scaler.inverse_transform(y_pred)
+
+        # Get the actual values in the original scale
+        y_test_inverted = self.scaler.inverse_transform(self.y_test.reshape(-1, 1))
+
+        # Plot the predictions against the actual values
+        plt.plot(y_test_inverted, label='Actual')
+        plt.plot(y_pred_inverted, label='Predicted')
+        plt.legend()
+        plt.show()
