@@ -15,6 +15,7 @@ model = lstm.lstm_model(stock_data=data)
 #model.find_parameters()
 model.input_parameters(hidden_units=10, optimization='ADAM')
 model.model_to_use()
+model.plot_predictions()
 
 
 

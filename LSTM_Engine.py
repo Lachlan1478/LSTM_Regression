@@ -4,6 +4,7 @@ from keras.models import Sequential
 from keras.layers import LSTM, Dense, Dropout
 from keras.wrappers.scikit_learn import KerasClassifier
 from sklearn.model_selection import GridSearchCV
+import matplotlib.pyplot as plt
 
 class lstm_model:
     def __init__(self, stock_data):
@@ -84,13 +85,30 @@ class lstm_model:
 
 
     def model_to_use(self):
-        lstm_model = self.build_model(self.hidden_units, self.optimization)
+        self.lstm_model = self.build_model(self.hidden_units, self.optimization)
+        self.lstm_model.fit(self.X_train, self.y_train, epochs = 100,batch_size=10, verbose=0)
 
         # Get the model's predicted prices
-        predictions = lstm_model.predict(self.X_test)
+        predictions = self.lstm_model.predict(self.X_test)
         predictions = self.scaler.inverse_transform(predictions)
 
         # Calculate the root mean squared error
         rmse = np.sqrt(np.mean(((predictions - self.y_test) ** 2)))
 
         print(rmse)
+
+    def plot_predictions(self):
+        # Make predictions on the test data
+        y_pred = self.lstm_model.predict(self.X_test)
+
+        # Invert the scaling to get the predictions back in the original scale
+        y_pred_inverted = self.scaler.inverse_transform(y_pred)
+
+        # Get the actual values in the original scale
+        y_test_inverted = self.scaler.inverse_transform(self.y_test.reshape(-1, 1))
+
+        # Plot the predictions against the actual values
+        plt.plot(y_test_inverted, label='Actual')
+        plt.plot(y_pred_inverted, label='Predicted')
+        plt.legend()
+        plt.show()
