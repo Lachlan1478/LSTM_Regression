@@ -5,12 +5,17 @@ from keras.layers import LSTM, Dense, Dropout
 from keras.wrappers.scikit_learn import KerasClassifier
 from sklearn.model_selection import GridSearchCV
 import matplotlib.pyplot as plt
+from datetime import datetime
+import plotly.express as px
+import plotly.graph_objs as go
 
 class lstm_model:
     def __init__(self, stock_data):
         df = stock_data
         series = df['Close']
         dates = df['Date'].values
+        dates = np.datetime_as_string(dates, unit='D', timezone='UTC')
+        date_strings = [datetime.strptime(date, '%Y-%m-%d').strftime('%m/%d/%Y') for date in dates][::-1]
 
         # Drop any rows with missing data
         series = series.dropna()
@@ -24,10 +29,9 @@ class lstm_model:
         train_data = scaled_data[0:training_data_len, :]
         test_data = scaled_data[training_data_len:, :]
 
-        self.train_dates = dates[0:training_data_len]
-        self.test_dates = dates[training_data_len:]
+        self.train_dates = date_strings[0:training_data_len]
+        self.test_dates = date_strings[training_data_len:]
 
-        print(self.test_dates)
 
 
         # Create a function to create the training data for the LSTM model
@@ -114,9 +118,20 @@ class lstm_model:
         # Get the actual values in the original scale
         y_test_inverted = self.scaler.inverse_transform(self.y_test.reshape(-1, 1))
 
+        n = 7  # Show one date label for every 7 data points
+        date_ticks = range(0, len(self.test_dates), n)
+
         # Plot the predictions against the actual values
-        plt.plot(y_test_inverted, label='Actual')
-        plt.plot(y_pred_inverted, label='Predicted')
-        plt.xticks(range(len(self.test_dates)), self.test_dates, rotation='vertical')
+        plt.plot(y_test_inverted, color='lightseagreen', label='Actual')
+        plt.plot(y_pred_inverted, color='red', label='Predicted')
+        plt.xticks(date_ticks, [self.test_dates[i] for i in date_ticks], rotation='vertical')
+
+        # Add a title and labels to the x- and y-axis
+        plt.title('Actual vs. LSTM Predicted Values')
+        plt.xlabel('Date')
+        plt.ylabel('Value')
+
         plt.legend()
         plt.show()
+
+
