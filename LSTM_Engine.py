@@ -6,13 +6,13 @@ from keras.wrappers.scikit_learn import KerasClassifier
 from sklearn.model_selection import GridSearchCV
 import matplotlib.pyplot as plt
 from datetime import datetime
-import plotly.express as px
-import plotly.graph_objs as go
 
 class lstm_model:
     def __init__(self, stock_data):
         df = stock_data
         series = df['Close']
+
+
         dates = df['Date'].values
         dates = np.datetime_as_string(dates, unit='D', timezone='UTC')
         date_strings = [datetime.strptime(date, '%Y-%m-%d').strftime('%m/%d/%Y') for date in dates][::-1]
@@ -31,8 +31,6 @@ class lstm_model:
 
         self.train_dates = date_strings[0:training_data_len]
         self.test_dates = date_strings[training_data_len:]
-
-
 
         # Create a function to create the training data for the LSTM model
         def create_training_data(data, look_back=1):
@@ -59,8 +57,7 @@ class lstm_model:
     # Create a function to build the LSTM model
     def build_model(self, hidden_units, optimization):
         model = Sequential()
-        model.add(
-            LSTM(units=hidden_units, return_sequences=True, input_shape=(self.X_train.shape[1], self.X_train.shape[2])))
+        model.add(LSTM(units=hidden_units, return_sequences=True, input_shape=(self.X_train.shape[1], self.X_train.shape[2])))
         model.add(LSTM(units=hidden_units, return_sequences=False))
         model.add(Dense(units=25))
         model.add(Dense(units=1))
