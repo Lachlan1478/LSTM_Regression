@@ -13,5 +13,7 @@ class features:
         for i in [14, 30, 50]:
             self.new_data['MovAv' + str(i)] = self.moving_average(i)
 
+        self.new_data['Close'] = self.data['Close'].values
+
     def return_data(self):
         return(self.new_data)
