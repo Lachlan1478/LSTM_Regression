@@ -14,6 +14,7 @@ class lstm_model:
         self.X_test = X_test
         self.y_test = y_test
 
+    #Manual Function to input paramaeters for model to save time if find_parameters has already been run in past
     def input_parameters(self, hidden_units, optimization):
         self.hidden_units = hidden_units
         self.optimization = optimization
