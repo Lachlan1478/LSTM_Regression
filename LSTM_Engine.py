@@ -24,7 +24,7 @@ class lstm_model:
         model = Sequential()
         model.add(LSTM(units=hidden_units, return_sequences=True, input_shape=(self.X_train.shape[1], self.X_train.shape[2])))
         model.add(LSTM(units=hidden_units, return_sequences=False))
-        model.add(Dense(units=25))
+        model.add(Dense(units=hidden_units))
         model.add(Dense(units=1))
         model.compile(loss='mean_squared_error', optimizer=optimization, metrics=['accuracy'])
         return model

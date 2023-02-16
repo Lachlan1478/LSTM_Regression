@@ -24,7 +24,11 @@ transformed_data = feature_object.return_data()
 #----------------------------------#
 #Preprocessing
 #----------------------------------#
-preprocessor = pre.Preprocessor(transformed_data, features=['Close', 'MovAv14', 'MovAv30', 'MovAv50'], target='Target')
+preprocessor = pre.Preprocessor(transformed_data,
+                                features=['Target', 'RSI', 'Volume', 'MovAv14', 'MovAv30', 'MovAv50'],
+                                target='Target',
+                                look_back=5,
+                                train_test_split=0.8)
 preprocessor.preprocess()
 X_train, y_train = preprocessor.get_train_data()
 X_test, y_test = preprocessor.get_test_data()
