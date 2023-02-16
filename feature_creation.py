@@ -28,7 +28,7 @@ class features:
             self.data['Target'] = self.data['5dFut'].pct_change(5)
             self.data['Volume'] = self.data['Volume'].pct_change(5)
         else:
-            self.data['Target'] = self.data['Close']
+            self.data['Target'] = self.data['Close'].shift(-5)
 
         self.new_data = pd.DataFrame()
         for i in [14, 30, 50]:
