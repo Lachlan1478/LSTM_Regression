@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-import pandas_ta as ta
 
 class features:
     def one_hot_encode(self, y_vals):
