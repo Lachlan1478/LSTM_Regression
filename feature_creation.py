@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-import pandas_ta as ta
 
 class features:
     def RSI(self, window):

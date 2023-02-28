@@ -58,6 +58,29 @@ model.input_parameters(hidden_units=10, optimization='SGD')
 model.model_to_use(epochs_to_use=100, batchsize_to_use= 32)
 model.plot_predictions(scaler = preprocessor.target_scaler, dates = test_dates)
 
+test_predictions = model.actual_predictions
+test_actual = model.actual_results
+
+limit = 0.05
+buy = 0
+hold = 0
+sell = 0
+
+rolling_diff = 0
 
 
+for i in range(0, len(test_predictions)):
+    diff = test_predictions[i] / test_actual[i] - 1
+    rolling_diff += diff
+    if(diff > limit):
+        buy += 1
+    elif(diff < -limit):
+        sell += 1
+    else:
+        hold += 1
+
+print("buy: ", buy)
+print("hold: ", hold)
+print("sell: ", sell)
+print("rolling diff: ", rolling_diff)
 
