@@ -18,7 +18,7 @@ data = data.iloc[::-1]
 #----------------------------------#
 #feature creation
 #----------------------------------#
-feature_object = fc.features(data, False)
+feature_object = fc.features(data)
 transformed_data = feature_object.return_data()
 
 #----------------------------------#

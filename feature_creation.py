@@ -3,6 +3,13 @@ import pandas as pd
 import pandas_ta as ta
 
 class features:
+    def one_hot_encode(self, y_vals):
+        new_y_vals = []
+
+        ####code
+
+        return(new_y_vals)
+
     def RSI(self, window):
         # Calculate RSI with pandas library
         delta = self.data['Close'].diff()
@@ -19,16 +26,13 @@ class features:
         pad = np.full((window - 1,), np.nan)
         return np.concatenate((pad, ma))
 
-    def __init__(self, stock_data, percentage_flag):
+    def __init__(self, stock_data, ):
         self.data = stock_data
         self.new_data = pd.DataFrame()
 
-        if(percentage_flag):
-            self.data['5dFut'] = self.data['Close'].shift(-5)
-            self.data['Target'] = self.data['5dFut'].pct_change(5)
-            self.data['Volume'] = self.data['Volume'].pct_change(5)
-        else:
-            self.data['Target'] = self.data['Close'].shift(-5)
+        self.data['5dFut'] = self.data['Close'].shift(-5)
+        self.data['Target'] = self.data['5dFut'].pct_change(5)
+        self.data['Volume'] = self.data['Volume'].pct_change(5)
 
         self.new_data = pd.DataFrame()
         for i in [14, 30, 50]:
