@@ -2,11 +2,15 @@ import numpy as np
 import pandas as pd
 
 class features:
-    def one_hot_encode(self, y_vals):
+    def one_hot_encode(self, y_vals, criteria_value):
         new_y_vals = []
-
-        ####code
-
+        for x in y_vals:
+            if x > (criteria_value):
+                new_y_vals.append(1)
+            elif x < -(criteria_value):
+                new_y_vals.append(-1)
+            else:
+                new_y_vals.append(0)
         return(new_y_vals)
 
     def RSI(self, window):
