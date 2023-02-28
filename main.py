@@ -51,11 +51,11 @@ test_dates = test_dates[-len(y_test):]
 #model
 #----------------------------------#
 model = lstm.lstm_model(X_train, y_train, X_test, y_test)
-model.find_parameters()
+#model.find_parameters()
 
-#model.input_parameters(hidden_units=50, optimization='Adam')
+model.input_parameters(hidden_units=10, optimization='SGD')
 
-model.model_to_use(epochs_to_use=1000, batchsize_to_use= 20)
+model.model_to_use(epochs_to_use=100, batchsize_to_use= 32)
 model.plot_predictions(scaler = preprocessor.target_scaler, dates = test_dates)
 
 

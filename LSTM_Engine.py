@@ -5,7 +5,7 @@ from keras.layers import LSTM, Dense, Dropout
 from keras.wrappers.scikit_learn import KerasClassifier
 from sklearn.model_selection import GridSearchCV
 import matplotlib.pyplot as plt
-from datetime import datetime
+from sklearn.metrics import mean_squared_error
 
 class lstm_model:
     def __init__(self, X_train, y_train, X_test, y_test):
@@ -59,7 +59,24 @@ class lstm_model:
 
     def model_to_use(self, epochs_to_use = 100, batchsize_to_use = 10):
         self.lstm_model = self.build_model(self.hidden_units, self.optimization)
-        self.lstm_model.fit(self.X_train, self.y_train, epochs = epochs_to_use,batch_size=batchsize_to_use, verbose=0)
+        history = self.lstm_model.fit(self.X_train, self.y_train, validation_split=0.2,
+                                      epochs = epochs_to_use,batch_size=batchsize_to_use, verbose=0)
+
+        # Make predictions on the test set
+        y_pred = self.lstm_model.predict(self.X_test)
+
+        # Calculate the RMSE
+        rmse = np.sqrt(mean_squared_error(self.y_test, y_pred))
+        print("RMSE: ", rmse)
+
+        # Plot training & validation loss values
+        plt.plot(history.history['loss'])
+        plt.plot(history.history['val_loss'])
+        plt.title('Model loss')
+        plt.ylabel('Loss')
+        plt.xlabel('Epoch')
+        plt.legend(['Train', 'Validation'], loc='upper left')
+        plt.show()
 
 
     def plot_predictions(self, scaler, dates):

@@ -30,7 +30,6 @@ class features:
         self.data = stock_data
         self.new_data = pd.DataFrame()
 
-
         self.data['5dFut'] = self.data['Close'].shift(-5)
         self.data['Target'] = self.data['5dFut'].pct_change(5)
         self.data['Volume'] = self.data['Volume'].pct_change(5)
