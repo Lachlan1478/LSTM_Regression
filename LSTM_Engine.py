@@ -89,6 +89,9 @@ class lstm_model:
         # Get the actual values in the original scale
         y_test_inverted = scaler.inverse_transform(self.y_test.reshape(-1, 1))
 
+        self.actual_predictions = y_pred_inverted
+        self.actual_results = y_test_inverted
+
         n = 7  # Show one date label for every 7 data points
         date_ticks = range(0, len(dates), n)
 
