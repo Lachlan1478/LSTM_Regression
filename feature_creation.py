@@ -29,7 +29,7 @@ class features:
         pad = np.full((window - 1,), np.nan)
         return np.concatenate((pad, ma))
 
-    def __init__(self, stock_data, ):
+    def __init__(self, stock_data, criteria):
         self.data = stock_data
         self.new_data = pd.DataFrame()
 
@@ -41,7 +41,12 @@ class features:
         for i in [14, 30, 50]:
             self.new_data['MovAv' + str(i)] = self.moving_average(i)
 
-        self.new_data['Target'] = self.data['Target'].values
+        self.new_data['Target'] = self.one_hot_encode(self.data['Target'].values, criteria)
+        test = self.new_data['Target'].values
+        vals = set(test)
+        for val in vals:
+            count = np.count_nonzero(test == val)
+            print(f"{val}: {count}")
         self.new_data['Close'] = self.data['Close'].values
         self.new_data['RSI']  = self.RSI(14)
         self.new_data['Volume'] = self.data['Volume'].values
